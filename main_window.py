@@ -2,7 +2,7 @@ import sys
 from PySide2.QtGui import QPixmap
 from PySide2.QtWebEngineWidgets import QWebEngineView
 from PySide2.QtWidgets import (
-    QApplication, QGridLayout, QRadioButton, QTextEdit,
+    QApplication, QComboBox, QGridLayout, QPushButton, QRadioButton, QTextEdit,
     QWidget,
     QLabel,
     QVBoxLayout,
@@ -24,6 +24,13 @@ class MainWindow(QWidget):
         digits_layout.setSpacing(4)
         layout.addLayout(digits_layout, 0, 2, 4, 1)
 
+        self.method_combobox = QComboBox()
+        self.method_combobox.addItems([
+            'Метод половинного деления',
+            'Метод Ньютона',
+            'Метод простых итераций'])
+        digits_layout.addWidget(self.method_combobox)
+
         interval_layout = QHBoxLayout()
         interval_layout.addWidget(QLabel('Интервал: ['))
         self.a_line_edit = QLineEdit()
@@ -34,11 +41,22 @@ class MainWindow(QWidget):
         interval_layout.addWidget(QLabel(']'))
         digits_layout.addLayout(interval_layout)
 
+        point_layout = QHBoxLayout()
+        point_layout.addWidget(QLabel('Начальное приближение: '))
+        self.point_lide_edit = QLineEdit()
+        point_layout.addWidget(self.point_lide_edit)
+        self.point_lide_edit.setEnabled(False)
+        digits_layout.addLayout(point_layout)
+
         eps_layout = QHBoxLayout()
         eps_layout.addWidget(QLabel('Точность: '))
         self.esp_line_edit = QLineEdit()
         eps_layout.addWidget(self.esp_line_edit)
         digits_layout.addLayout(eps_layout)
+
+        self.load_from_file_button = QPushButton()
+        self.load_from_file_button.setText('Загрузить из файла')
+        digits_layout.addWidget(self.load_from_file_button)
 
         result_text_edit = QTextEdit()
         result_text_edit.setReadOnly(True)
