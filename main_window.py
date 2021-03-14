@@ -2,7 +2,7 @@ import sys
 from PySide2.QtGui import QDoubleValidator, QPixmap, QRegularExpressionValidator
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import (
-    QApplication, QButtonGroup, QComboBox, QGridLayout, QPushButton, QRadioButton, QTextEdit,
+    QApplication, QButtonGroup, QComboBox, QFileDialog, QGridLayout, QPushButton, QRadioButton, QTextEdit,
     QWidget,
     QLabel,
     QVBoxLayout,
@@ -65,6 +65,7 @@ class MainWindow(QWidget):
 
         self.load_from_file_button = QPushButton()
         self.load_from_file_button.setText('Загрузить из файла')
+        self.load_from_file_button.clicked.connect(self.load_from_file)
         digits_layout.addWidget(self.load_from_file_button)
 
         self.result_text_edit = QTextEdit()
@@ -73,6 +74,7 @@ class MainWindow(QWidget):
 
         self.save_to_file_button = QPushButton()
         self.save_to_file_button.setText('Сохранить в файл')
+        self.save_to_file_button.clicked.connect(self.save_to_file)
         digits_layout.addWidget(self.save_to_file_button)
 
         self.radio_group = QButtonGroup()
@@ -175,6 +177,32 @@ class MainWindow(QWidget):
             self.point_lide_edit.setEnabled(True)
             self.a_line_edit.setEnabled(False)
             self.b_line_edit.setEnabled(False)
+
+    def save_to_file(self):
+        text = self.result_text_edit.toPlainText()
+        if text:
+            filename = QFileDialog().getSaveFileName(filter='Yaml files (*.yaml)')[0]
+            
+            with open(filename, 'w', encoding='utf-8') as file:
+                file.write(text)
+
+    def load_from_file(self):
+        filename = QFileDialog().getOpenFileName(filter='Yaml files (*.yaml)')[0]
+        
+        with open(filename, 'r', encoding='utf-8') as file:
+            conf = yaml.safe_load(file)
+        
+        if 'a' in conf:
+            self.a_line_edit.setText(str(conf['a']).replace('.', ','))
+
+        if 'b' in conf:
+            self.b_line_edit.setText(str(conf['b']).replace('.', ','))
+
+        if 'point' in conf:
+            self.point_lide_edit.setText(str(conf['point']).replace('.', ','))
+
+        if 'eps' in conf:
+            self.eps_line_edit.setText(str(conf['eps']).replace('.', ','))
 
 if __name__ == "__main__":
     app = QApplication([])
