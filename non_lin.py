@@ -8,7 +8,9 @@ class NonlinEq:
         self.d2 = d2
 
     def solve_by_bisection(self, a, b, eps):
+        k = 0
         while abs(a - b) > eps:
+            k += 1
             c = (a + b) / 2
 
             print('%.3f %.3f %.3f %.3f %.3f %.3f %.3f' %
@@ -19,7 +21,7 @@ class NonlinEq:
             else:
                 a = c
 
-        return c
+        return c, k
 
     def solve_by_newtons(self, x0, eps):
         last_x = x0
@@ -28,7 +30,9 @@ class NonlinEq:
                 last_x = x
                 break
         
+        k = 0
         while True:
+            k += 1
             x = last_x - self.f(last_x)/self.d1(last_x)
 
             print('%.3f %.3f %.3f %.3f %.3f' %
@@ -39,7 +43,7 @@ class NonlinEq:
 
             last_x = x
 
-        return x
+        return x, k
 
     def solve_by_simple_iter(self, x0, eps):
         d1_max = -math.inf
@@ -51,7 +55,9 @@ class NonlinEq:
         phi = lambda x: x + k * self.f(x)
 
         last_x = x0
+        k = 0
         while True:
+            k += 1
             x = phi(last_x)
 
             print('%.3f %.3f %.3f %.3f %.3f' %
@@ -62,4 +68,14 @@ class NonlinEq:
 
             last_x = x
 
-        return x
+        return x, k
+
+    def plot_to_figure(self, figure, a, b, eps):
+        xs = []
+        ys = []
+
+        for x in np.linspace(a, b + eps, int((b - a) / eps)):
+            xs.append(x)
+            ys.append(self.f(x))
+
+        figure.plot(xs, ys)

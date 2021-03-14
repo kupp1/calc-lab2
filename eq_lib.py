@@ -1,5 +1,5 @@
 from non_lin import NonlinEq
-from math import sin, cos
+from math import sin, cos, log, exp, tan
 
 eq_lib = []
 
@@ -13,4 +13,16 @@ eq_lib.append(NonlinEq(
     lambda x: 2*sin(3*x) - 4*cos(x/2),
     lambda x: 2 * (sin(x/2) + 3*cos(3*x)),
     lambda x: cos(x/2) - 18*sin(3*x)
+))
+
+eq_lib.append(NonlinEq(
+    lambda x: sin(x),
+    lambda x: cos(x),
+    lambda x: -sin(x)
+))
+
+eq_lib.append(NonlinEq(
+    lambda x: exp(sin(x)) - 1,
+    lambda x: exp(sin(x)) * cos(x),
+    lambda x: exp(sin(x)) * ((cos(x))**2 - sin(x))
 ))
