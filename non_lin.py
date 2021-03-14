@@ -55,9 +55,9 @@ class NonlinEq:
         phi = lambda x: x + k * self.f(x)
 
         last_x = x0
-        k = 0
+        i = 0
         while True:
-            k += 1
+            i += 1
             x = phi(last_x)
 
             print('%.3f %.3f %.3f %.3f %.3f' %
@@ -68,7 +68,7 @@ class NonlinEq:
 
             last_x = x
 
-        return x, k
+        return x, i
 
     def plot_to_figure(self, figure, a, b, eps):
         xs = []
