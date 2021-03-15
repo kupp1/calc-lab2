@@ -10,7 +10,7 @@ class NonlinEq:
     def solve_by_bisection(self, a, b, eps):
         k = 0
         c = (a + b) / 2
-        while abs(a - b) > eps or abs(self.f(c)) > eps:
+        while abs(self.f(c)) > eps:
             k += 1
             c = (a + b) / 2
 
@@ -42,6 +42,9 @@ class NonlinEq:
                 break
 
             last_x = x
+
+            if k >= 1000:
+                raise ValueError('Метод не сходится')
 
         return x, k
 
