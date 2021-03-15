@@ -9,7 +9,8 @@ class NonlinEq:
 
     def solve_by_bisection(self, a, b, eps):
         k = 0
-        while abs(a - b) > eps:
+        c = (a + b) / 2
+        while abs(a - b) > eps or abs(self.f(c)) > eps:
             k += 1
             c = (a + b) / 2
 
@@ -20,6 +21,9 @@ class NonlinEq:
                 b = c
             else:
                 a = c
+
+            if k >= 1000:
+                raise ValueError('Метод не сходится')
 
         return c, k
 
@@ -60,6 +64,8 @@ class NonlinEq:
 
             last_x = x
 
+            if i >= 1000:
+                raise ValueError('Метод не сходится')
         return x, i
 
     def plot_to_figure(self, figure, a, b, eps):

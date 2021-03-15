@@ -136,36 +136,40 @@ class MainWindow(QWidget):
         self.plot.figure.clf()
         plot_ax = self.plot.figure.subplots()
 
-        if method_id == 0:
-            if a and b:
-                a = float(a)
-                b = float(b)
-            else:
-                return
-            
-            ans, k = eq.solve_by_bisection(a, b, eps)
-
-            eq.plot_to_figure(plot_ax, a, b, eps)
-        else:
-            if point:
-                point = float(point)
-            else:
-                return
-
-            if method_id == 1:
-                m = eq.solve_by_newtons
-            elif method_id == 2:
-                m = eq.solve_by_simple_iter
-
-            ans, k = m(point, eps)
-            eq.plot_to_figure(plot_ax, point - 1, point + 1, eps)
         d = {}
-        d['ans'] = float(ans)
-        d['f'] = float(eq.f(ans))
-        d['k'] = k
-        self.result_text_edit.setText(yaml.safe_dump(d))
+        try:
+            if method_id == 0:
+                if a and b:
+                    a = float(a)
+                    b = float(b)
+                else:
+                    return
+                
+                ans, k = eq.solve_by_bisection(a, b, eps)
 
-        self.plot.draw()
+                eq.plot_to_figure(plot_ax, a, b, eps)
+            else:
+                if point:
+                    point = float(point)
+                else:
+                    return
+
+                if method_id == 1:
+                    m = eq.solve_by_newtons
+                elif method_id == 2:
+                    m = eq.solve_by_simple_iter
+
+                ans, k = m(point, eps)
+                eq.plot_to_figure(plot_ax, point - 1, point + 1, eps)
+            d['ans'] = float(ans)
+            d['f'] = float(eq.f(ans))
+            d['k'] = k
+            self.result_text_edit.setText(yaml.safe_dump(d))
+
+            self.plot.draw()
+        except Exception as e:
+            d['error'] = str(e)
+            self.result_text_edit.setText(yaml.safe_dump(d, allow_unicode=True))
     
     @Slot(int)
     def method_changed(self, id):
