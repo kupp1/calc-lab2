@@ -25,10 +25,6 @@ class NonlinEq:
 
     def solve_by_newtons(self, x0, eps):
         last_x = x0
-        for x in np.linspace(x0 - eps, x0 + eps, 100):
-            if self.f(x) * self.d2(x) > 0:
-                last_x = x
-                break
         
         k = 0
         while True:
@@ -46,11 +42,7 @@ class NonlinEq:
         return x, k
 
     def solve_by_simple_iter(self, x0, eps):
-        d1_max = -math.inf
-        for x in np.linspace(x0 - eps, x0 + eps, 100):
-            d1_max = max(d1_max, self.d1(x))
-        print(d1_max)
-        k = -1 / float(d1_max)
+        k = -1 / self.d1(x0)
 
         phi = lambda x: x + k * self.f(x)
 
