@@ -138,14 +138,18 @@ class MainWindow(QWidget):
 
         d = {}
         try:
-            if method_id == 0:
+            if method_id != 2:
                 if a and b:
                     a = float(a)
                     b = float(b)
                 else:
                     return
                 
-                ans, k = eq.solve_by_bisection(a, b, eps)
+                if method_id == 0:
+                    m = eq.solve_by_bisection
+                elif method_id == 1:
+                    m = eq.solve_by_newtons
+                ans, k = m(a, b, eps)
 
                 eq.plot_to_figure(plot_ax, a, b, eps)
             else:
@@ -173,7 +177,7 @@ class MainWindow(QWidget):
     
     @Slot(int)
     def method_changed(self, id):
-        if id == 0:
+        if id != 2:
             self.point_lide_edit.setEnabled(False)
             self.a_line_edit.setEnabled(True)
             self.b_line_edit.setEnabled(True)
