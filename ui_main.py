@@ -111,3 +111,19 @@ class UIMainWindow(QWidget):
 
         self.plot = FigureCanvas(Figure(figsize=(5, 5)))
         layout.addWidget(self.plot, 5, 0, 1, 3)
+
+        graph_interval_layout = QHBoxLayout()
+        graph_interval_layout.addWidget(QLabel('['))
+        self.graph_a_line_edit = QLineEdit()
+        self.graph_a_line_edit.setValidator(QDoubleValidator())
+        graph_interval_layout.addWidget(self.graph_a_line_edit)
+        graph_interval_layout.addWidget(QLabel(';'))
+        self.graph_b_line_edit = QLineEdit()
+        self.graph_b_line_edit.setValidator(QDoubleValidator())
+        graph_interval_layout.addWidget(self.graph_b_line_edit)
+        graph_interval_layout.addWidget(QLabel(']'))
+        layout.addLayout(graph_interval_layout, 6, 0, 1, 3)
+
+        self.update_graph_button = QPushButton()
+        self.update_graph_button.setText('Поcтроить')
+        graph_interval_layout.addWidget(self.update_graph_button)

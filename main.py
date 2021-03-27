@@ -2,7 +2,7 @@ import sys
 from PySide2.QtGui import QDoubleValidator, QPixmap, QRegularExpressionValidator
 from PySide2.QtCore import Slot
 from PySide2.QtWidgets import (
-    QApplication, QButtonGroup, QComboBox, QFileDialog, QGridLayout, QPushButton, QRadioButton, QTextEdit,
+    QApplication, QButtonGroup, QComboBox, QFileDialog, QGridLayout, QMessageBox, QPushButton, QRadioButton, QTextEdit,
     QWidget,
     QLabel,
     QVBoxLayout,
@@ -21,24 +21,55 @@ class MainWindow(UIMainWindow):
         self.save_to_file_button.clicked.connect(self.save_to_file)
         self.load_from_file_button.clicked.connect(self.load_from_file)
         self.calc_button.clicked.connect(self.calc)
+        #self.update_graph_button.clicked.connect(self.plot2graph)
+
+    @staticmethod
+    def show_warning(s):
+        box = QMessageBox()
+        box.setWindowTitle('Ошибка')
+        box.setIcon(QMessageBox.Warning)
+        box.setText(s)
+        box.exec_()
+
+    def get_eq(self):
+        eq = self.radio_group.checkedId()
+        if 1 <= eq <= 4:
+            return eq_lib[eq - 1]
+        else:
+            self.show_warning('Необходмо выбрать одно из уравнений')
+
+    def get_interval(self):
+        a = self.a_line_edit.text().replace(',', '.')
+        b = self.b_line_edit.text().replace(',', '.')
+        if a and b:
+            a = float(a)
+            b = float(b)
+            return a, b
+        else:
+            self.show_warning('Введите [a, b]')
+            return None, None
+
+    def get_eps(self):
+        eps = self.eps_line_edit.text().replace(',', '.')
+        if eps:
+            eps = float(eps)
+            return eps
+        else:
+            self.show_warning('Введите точность')
+
 
     def calc(self):
         method_id = self.method_combobox.currentIndex()
-        eq = self.radio_group.checkedId()
-        a = self.a_line_edit.text().replace(',', '.')
-        b = self.b_line_edit.text().replace(',', '.')
-        eps = self.eps_line_edit.text().replace(',', '.')
+        eq = self.get_eq()
+        if not eq:
+            return
+        a, b = self.get_interval()
+        if not a:
+            return
+        eps = self.get_eps()
+        if not eps:
+            return
         point = self.point_lide_edit.text().replace(',', '.')
-
-        if eq == -1:
-            return
-
-        eq = eq_lib[eq - 1]
-
-        if eps:
-            eps = float(eps)
-        else:
-            return
 
         self.plot.figure.clf()
         plot_ax = self.plot.figure.subplots()
@@ -46,12 +77,6 @@ class MainWindow(UIMainWindow):
         d = {}
         try:
             if method_id != 2:
-                if a and b:
-                    a = float(a)
-                    b = float(b)
-                else:
-                    return
-                
                 if method_id == 0:
                     m = eq.solve_by_bisection
                 elif method_id == 1:
@@ -118,6 +143,17 @@ class MainWindow(UIMainWindow):
 
         if 'eps' in conf:
             self.eps_line_edit.setText(str(conf['eps']).replace('.', ','))
+
+    # def plot2graph(self):
+    #     eq = self.get_eq_id()
+
+    #     a = self.graph_a_line_edit.text().replace(',', '.')
+    #     b = self.graph_b_line_edit.text().replace(',', '.')
+    #     if a and b:
+    #         a = float(a)
+    #         b = float(b)
+    #     else:
+    #         self.show_warning('Введите [a, b]')
 
 if __name__ == "__main__":
     app = QApplication([])
