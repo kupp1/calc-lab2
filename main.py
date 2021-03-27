@@ -21,7 +21,7 @@ class MainWindow(UIMainWindow):
         self.save_to_file_button.clicked.connect(self.save_to_file)
         self.load_from_file_button.clicked.connect(self.load_from_file)
         self.calc_button.clicked.connect(self.calc)
-        #self.update_graph_button.clicked.connect(self.plot2graph)
+        self.update_graph_button.clicked.connect(self.plot2graph)
 
     @staticmethod
     def show_warning(s):
@@ -144,16 +144,22 @@ class MainWindow(UIMainWindow):
         if 'eps' in conf:
             self.eps_line_edit.setText(str(conf['eps']).replace('.', ','))
 
-    # def plot2graph(self):
-    #     eq = self.get_eq_id()
+    def plot2graph(self):
+        eq = self.get_eq()
+        eps = self.get_eps()
 
-    #     a = self.graph_a_line_edit.text().replace(',', '.')
-    #     b = self.graph_b_line_edit.text().replace(',', '.')
-    #     if a and b:
-    #         a = float(a)
-    #         b = float(b)
-    #     else:
-    #         self.show_warning('Введите [a, b]')
+        a = self.graph_a_line_edit.text().replace(',', '.')
+        b = self.graph_b_line_edit.text().replace(',', '.')
+        if a and b:
+            a = float(a)
+            b = float(b)
+        else:
+            self.show_warning('Введите [a, b]')
+
+        self.plot.figure.clf()
+        plot_ax = self.plot.figure.subplots()
+        eq.plot_to_figure(plot_ax, a, b, eps)
+        self.plot.draw()
 
 if __name__ == "__main__":
     app = QApplication([])
