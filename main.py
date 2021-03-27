@@ -74,14 +74,13 @@ class MainWindow(UIMainWindow):
         self.plot.figure.clf()
         plot_ax = self.plot.figure.subplots()
 
-        d = {}
         try:
             if method_id != 2:
                 if method_id == 0:
                     m = eq.solve_by_bisection
                 elif method_id == 1:
                     m = eq.solve_by_newtons
-                ans, k = m(a, b, eps)
+                d = m(a, b, eps)
 
                 eq.plot_to_figure(plot_ax, a, b, eps)
             else:
@@ -97,13 +96,11 @@ class MainWindow(UIMainWindow):
 
                 ans, k = m(point, eps)
                 eq.plot_to_figure(plot_ax, point - 1, point + 1, eps)
-            d['ans'] = float(ans)
-            d['f'] = float(eq.f(ans))
-            d['k'] = k
-            self.result_text_edit.setText(yaml.safe_dump(d))
+            self.result_text_edit.setText(yaml.safe_dump(d, allow_unicode=True))
 
             self.plot.draw()
         except Exception as e:
+            d = {}
             d['error'] = str(e)
             self.result_text_edit.setText(yaml.safe_dump(d, allow_unicode=True))
     

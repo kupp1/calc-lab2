@@ -25,7 +25,12 @@ class NonlinEq:
             else:
                 a = c
 
-        return c, k
+        d = {}
+        d['x'] = float(c)
+        d['f(x)'] = self.f(float(c))
+        d['k'] = k
+
+        return d
 
     def solve_by_newtons(self, a, b, eps):
         if self.f(a) * self.f(b) > 0:
@@ -64,7 +69,12 @@ class NonlinEq:
             if k >= 1000:
                 raise ValueError('Метод не сходится')
 
-        return x, k
+        d = {}
+        d['x'] = float(x)
+        d['f(x)'] = self.f(float(x))
+        d['k'] = k
+
+        return d
 
     def solve_by_simple_iter(self, x0, eps):
         k = 1 / self.d1(x0)
