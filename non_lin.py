@@ -9,7 +9,7 @@ class NonlinEq:
 
     def solve_by_bisection(self, a, b, eps):
         if self.f(a) * self.f(b) > 0:
-            raise ValueError('Метод не сходится: разные знаки на концах отрезка')
+            raise ValueError('Метод не сходится: одинаковые знаки на концах отрезка')
 
         k = 0
         c = (a + b) / 2
@@ -34,7 +34,7 @@ class NonlinEq:
 
     def solve_by_newtons(self, a, b, eps):
         if self.f(a) * self.f(b) > 0:
-            raise ValueError('Метод не сходится: разные знаки на концах отрезка')
+            raise ValueError('Метод не сходится: одинаковые знаки на концах отрезка')
 
         last_x = a;
         for x in np.linspace(a, b + eps, int((b - a) / eps)):
