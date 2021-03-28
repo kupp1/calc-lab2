@@ -44,13 +44,9 @@ class NonlinEq:
                 raise ValueError('Метод не сходится: 2-я производная меняет знак')
             last_x = x
 
-        x0 = 0
-        for x0_tmp in [a, b]:
-            if self.f(x0_tmp) * self.d2(x0_tmp) > 0:
-                x0 = x0_tmp
-                break
-        else:
-            raise ValueError('Метод не сходится')
+        x0 = a
+        if self.f(b) * self.d2(b) > 0:
+            x0 = b
         
         last_x = x0
         k = 0
