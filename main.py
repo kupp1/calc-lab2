@@ -68,6 +68,18 @@ class MainWindow(UIMainWindow):
         else:
             self.show_warning('Введите точность')
 
+    def get_point(self):
+        point = self.point_lide_edit.text().replace(',', '.')
+        if point:
+            point = float(point)
+        else:
+            self.show_warning('Введите начальное приближение')
+            return
+        a, b = self.get_interval()
+        if point < a or point > b:
+            self.show_warning('Начальное приближение не соответвует границам')
+            return
+        return point
 
     def calc(self):
         method_id = self.method_combobox.currentIndex()
@@ -80,7 +92,6 @@ class MainWindow(UIMainWindow):
         eps = self.get_eps()
         if not eps:
             return
-        point = self.point_lide_edit.text().replace(',', '.')
 
         self.plot.figure.clf()
         plot_ax = self.plot.figure.subplots()
@@ -95,17 +106,11 @@ class MainWindow(UIMainWindow):
 
                 eq.plot_to_figure(plot_ax, a, b, eps)
             else:
-                if point:
-                    point = float(point)
-                else:
+                point = self.get_point()
+                if point is None:
                     return
 
-                if method_id == 1:
-                    m = eq.solve_by_newtons
-                elif method_id == 2:
-                    m = eq.solve_by_simple_iter
-
-                ans, k = m(point, eps)
+                d = eq.solve_by_fixed_point_iter(a, b, point, eps)
                 eq.plot_to_figure(plot_ax, point - 1, point + 1, eps)
             self.result_text_edit.setText(yaml.safe_dump(d, allow_unicode=True))
 
@@ -116,14 +121,14 @@ class MainWindow(UIMainWindow):
     
     @Slot(int)
     def method_changed(self, id):
-        if id != 2:
+        if id < 2:
             self.point_lide_edit.setEnabled(False)
             self.a_line_edit.setEnabled(True)
             self.b_line_edit.setEnabled(True)
         else:
             self.point_lide_edit.setEnabled(True)
-            self.a_line_edit.setEnabled(False)
-            self.b_line_edit.setEnabled(False)
+            self.a_line_edit.setEnabled(True)
+            self.b_line_edit.setEnabled(True)
 
     def save_to_file(self):
         text = self.result_text_edit.toPlainText()

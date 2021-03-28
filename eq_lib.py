@@ -22,7 +22,7 @@ eq_lib.append(NonlinEq(
 ))
 
 eq_lib.append(NonlinEq(
-    lambda x: exp(sin(x)) - 1,
-    lambda x: exp(sin(x)) * cos(x),
-    lambda x: exp(sin(x)) * ((cos(x))**2 - sin(x))
+    lambda x: x**3 - x + 4,
+    lambda x: 3*x**2 - 1,
+    lambda x: 6*x
 ))

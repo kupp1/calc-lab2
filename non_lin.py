@@ -72,10 +72,22 @@ class NonlinEq:
 
         return d
 
-    def solve_by_simple_iter(self, x0, eps):
-        k = 1 / self.d1(x0)
+    def solve_by_fixed_point_iter(self, a, b, x0, eps):
+        d1_max = max(self.d1(a), self.d1(b)) 
+        k = -1 / d1_max
 
-        phi = lambda x: x - k * self.f(x)
+        phi = lambda x: x + k * self.f(x)
+        phi_d1 = lambda x: 1 + k * self.d1(x)
+
+        q = -math.inf
+        for x in np.linspace(a, b + eps, int((b - a) / eps)):
+            tmp = abs(phi_d1(x))
+            q = max(q, tmp)
+            if tmp >= 1:
+                raise ValueError('Метод не сходится: ' + 
+                    '|φ\'(x)| >= 1')
+
+        break_const = eps if q <= 0.5 else ((1-q)/q) * eps
 
         last_x = x0
         i = 0
@@ -86,14 +98,21 @@ class NonlinEq:
             #print('%.3f %.3f %.3f %.3f %.3f' %
             # (last_x, self.f(last_x), x, phi(x), abs(x - last_x)))
 
-            if abs(x - last_x) <= eps:
+            if abs(x - last_x) <= break_const:
                 break
 
             last_x = x
 
             if i >= 1000:
                 raise ValueError('Метод не сходится')
-        return x, i
+
+        d = {}
+        d['x'] = float(x)
+        d['f(x)'] = self.f(float(x))
+        d['k'] = i
+        d['q'] = float(q)
+
+        return d
 
     def plot_to_figure(self, figure, a, b, eps):
         xs = []
