@@ -38,16 +38,27 @@ class MainWindow(UIMainWindow):
         else:
             self.show_warning('Необходмо выбрать одно из уравнений')
 
-    def get_interval(self):
-        a = self.a_line_edit.text().replace(',', '.')
-        b = self.b_line_edit.text().replace(',', '.')
+    def _get_interval(self, a, b):
+        a = a.text().replace(',', '.')
+        b = b.text().replace(',', '.')
         if a and b:
             a = float(a)
             b = float(b)
-            return a, b
+            if b <= a:
+                self.show_warning('b должно быть >= a')
+                return None, None
+            else:
+                return a, b
         else:
             self.show_warning('Введите [a, b]')
             return None, None
+
+    def get_interval(self):
+        return self._get_interval(self.a_line_edit, self.b_line_edit)
+
+    def get_graph_interval(self):
+        return self._get_interval(self.graph_a_line_edit,
+         self.graph_b_line_edit)
 
     def get_eps(self):
         eps = self.eps_line_edit.text().replace(',', '.')
@@ -64,7 +75,7 @@ class MainWindow(UIMainWindow):
         if not eq:
             return
         a, b = self.get_interval()
-        if not a:
+        if not a and not b:
             return
         eps = self.get_eps()
         if not eps:
@@ -100,9 +111,8 @@ class MainWindow(UIMainWindow):
 
             self.plot.draw()
         except Exception as e:
-            d = {}
-            d['error'] = str(e)
-            self.result_text_edit.setText(yaml.safe_dump(d, allow_unicode=True))
+            self.result_text_edit.setText('')
+            self.show_warning(str(e))
     
     @Slot(int)
     def method_changed(self, id):
@@ -143,15 +153,14 @@ class MainWindow(UIMainWindow):
 
     def plot2graph(self):
         eq = self.get_eq()
+        if not eq:
+            return
         eps = self.get_eps()
-
-        a = self.graph_a_line_edit.text().replace(',', '.')
-        b = self.graph_b_line_edit.text().replace(',', '.')
-        if a and b:
-            a = float(a)
-            b = float(b)
-        else:
-            self.show_warning('Введите [a, b]')
+        if not eps:
+            return
+        a, b = self.get_graph_interval()
+        if not a and not b:
+            return
 
         self.plot.figure.clf()
         plot_ax = self.plot.figure.subplots()
