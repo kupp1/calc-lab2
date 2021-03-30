@@ -73,11 +73,16 @@ class NonlinEq:
         return d
 
     def solve_by_fixed_point_iter(self, a, b, x0, eps):
-        d1_max = max(self.d1(a), self.d1(b)) 
-        k = -1 / d1_max
+        m = 0
+        for x in np.linspace(a, b + eps, int((b - a) / eps)):
+            m = max(m, abs(self.d1(x)))
 
-        phi = lambda x: x + k * self.f(x)
-        phi_d1 = lambda x: 1 + k * self.d1(x)
+        k = 1 / m
+        if k * self.d1(x0) < 0:
+            k *= -1
+
+        phi = lambda x: x - k * self.f(x)
+        phi_d1 = lambda x: 1 - k * self.d1(x)
 
         q = -math.inf
         for x in np.linspace(a, b + eps, int((b - a) / eps)):
